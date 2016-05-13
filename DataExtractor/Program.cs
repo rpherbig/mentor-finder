@@ -14,8 +14,15 @@ namespace DataExtractor
     {
         static void Main(string[] args)
         {
-            var client = new MongoClient("mongodb://username:password@myserver/databaseName");
-            var collection = client.GetDatabase("databaseName").GetCollection<PersonDocument>("people");
+            var username = ConfigurationManager.AppSettings["username"];
+            var password = ConfigurationManager.AppSettings["password"];
+            var server = ConfigurationManager.AppSettings["server"];
+            var database = ConfigurationManager.AppSettings["database"];
+            var connectionString = String.Format("mongodb://{0}:{1}@{2}/{3}",
+                username, password, server, database);
+
+            var client = new MongoClient(connectionString);
+            var collection = client.GetDatabase(database).GetCollection<PersonDocument>("people");
             var results = collection.FindSync(b => true);
             var doc = results.First();
             Console.Out.WriteLine(doc.email);
